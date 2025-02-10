@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
@@ -17,6 +18,35 @@ import OrderList from './components/OrderList.tsx';
 import Header from './components/Header.tsx';
 
 export default function Dashboard() {
+
+  const navigate = useNavigate(); // useNavigate 훅 사용
+
+  const handleDownload = async () => {
+    try {
+      const response = await fetch('/api/system/menu/status/0', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('메뉴 정보: ', data);
+
+      if (data.header.code === 401) {
+        alert(data.header.message);
+        navigate('/');
+      }
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+  }
+
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
@@ -88,6 +118,7 @@ export default function Dashboard() {
               color="primary"
               startDecorator={<DownloadRoundedIcon />}
               size="sm"
+              onClick={handleDownload}
             >
               Download PDF
             </Button>

@@ -1,8 +1,9 @@
 import './Login.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { Link } from '@mui/material';
+import Cookies from 'js-cookie';
 
 function Login() {
   const navigate = useNavigate(); // useNavigate 훅 사용
@@ -93,6 +94,16 @@ function Login() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const sessionCookie = Cookies.get('JAVA_WEB_SESSION');
+    console.log('sessionCookie', sessionCookie);
+    if (sessionCookie) {
+      if (window.location.pathname !== '/dashboard') {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [navigate]);
 
   return (
     <section className="login-form">
